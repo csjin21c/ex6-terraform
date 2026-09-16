@@ -21,7 +21,7 @@ jobs:
     # git init디렉토리와 terraform 파일이 다른 디렉토리에 있을 경우 사용
     defaults:
       run:
-        working-directory: ./network # 현재 디렉토리는 마침표
+        working-directory: ./infra/remote-backend
     steps:
       # 3. 소스 코드 체크아웃 (체크아웃?: 저장소의 파일을 러너로 다운로드)
       - name: Checkout Repository
