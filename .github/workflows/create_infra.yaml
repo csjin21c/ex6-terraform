@@ -1,0 +1,61 @@
+name: "Terraform CI/CD Pipeline"
+
+# 1. 트리거 조건 설정: 어떤 이벤트에서 워크플로우를 실행할지 지정
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# 2. 권한 설정 (OpenID Connect 또는 시크릿 접근 권한)
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: "Terraform Plan & Apply"
+    runs-on: ubuntu-latest # 실행 환경 (GitHub-hosted runner)
+    # 워크플로우가 실행될 디렉토리를 working-directory: 디렉토리명
+    # git init디렉토리와 terraform 파일이 다른 디렉토리에 있을 경우 사용
+    defaults:
+      run:
+        working-directory: ./network # 현재 디렉토리는 마침표
+    steps:
+      # 3. 소스 코드 체크아웃 (체크아웃?: 저장소의 파일을 러너로 다운로드)
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 4. Terraform CLI 도구 설치
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.x # 사용할 테라폼 버전 지정
+
+      # 5. AWS 인증 정보 설정 (GitHub Secrets 활용)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # 6. 테라폼 초기화 (Provider 다운로드 및 Backend 설정)
+      - name: Terraform Init
+        run: terraform init
+
+      # 7. 테라폼 코드 포맷 검증
+      - name: Terraform Validate
+        run: terraform validate
+
+      # 8. 변경 사항 미리보기 (Plan)
+      # 컬러를 포함할 경우 색상코드를 텍스트로 표현해 깨져서 출력되는 것을 방지
+      - name: Terraform Plan
+        run: terraform plan -no-color
+        continue-on-error: false  # 에러 발생시 다음 단계 진행 여부 결정(true-진행, false-종료)
+
+      # 9. 인프라 반영 (Apply) or - main 브랜치에 푸시(Merge)될 때만 실행
+      - name: Terraform Apply or Destory
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
