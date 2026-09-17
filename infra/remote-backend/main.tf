@@ -5,13 +5,8 @@
 terraform {
   # 프로젝트에서 사용할 클라우드 제공자(Provider) 목록을 정의합니다.
   required_providers {
-    # 'aws'라는 이름으로 사용할 프로바이더 설정을 시작합니다.
     aws = {
-      # 프로바이더 다운로드 경로입니다. (공식 HashiCorp 저장소의 AWS 플러그인)
       source  = "hashicorp/aws"
-      
-      # 사용할 버전을 지정합니다. 
-      # ~> 5.0의 의미: 5.0 이상 버전 중 가장 최신 패치 버전을 사용하겠다는 뜻입니다. (예: 5.1, 5.2 등)
       version = "~> 6.0"
     }
   }
@@ -26,7 +21,6 @@ terraform {
 
 # AWS 프로바이더 설정 블록
 provider "aws" {
-  # 인프라가 생성될 물리적 위치(리전)를 지정합니다.
   region = "ap-south-1" 
 }
 
