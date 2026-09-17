@@ -15,13 +15,13 @@ terraform {
       version = "~> 6.0"
     }
   }
-  backend "s3" {
-    bucket         = "bipa17-instructor-bucket"                             # 위에서 만든 S3 버킷 이름
-    key            = "TerraformState/Lab/remote-backend/terraform.tfstate"  # 버킷 내 저장 경로
-    region         = "ap-south-1"                                           # 리전
-    dynamodb_table = "ian-terraform-lock-table"                             # DynamoDB 테이블 이름
-    encrypt        = true                                                   # 상태 파일 암호화 여부
-  }
+#   backend "s3" {
+#     bucket         = "instructor-ex-bucket"                                # 위에서 만든 S3 버킷 이름
+#     key            = "TerraformState/Ex/remote-backend/terraform.tfstate"  # 버킷 내 저장 경로
+#     region         = "ap-south-1"                                          # 리전
+#     dynamodb_table = "instructor-ex-terraform-lock-table"                  # DynamoDB 테이블 이름
+#     encrypt        = true                                                  # 상태 파일 암호화 여부
+#   }
 }
 
 # AWS 프로바이더 설정 블록
